@@ -9,13 +9,15 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class PostController {
-    private final PostRepository postsDao;
-    private final UserRepository userDao;
 
-    public PostController(PostRepository postsDao , UserRepository userDao) {
+    private PostRepository postsDao;
+    private UserRepository usersDao;
+
+    public PostController(PostRepository postsDao, UserRepository usersDao) {
         this.postsDao = postsDao;
-        this.userDao = userDao;
+        this.usersDao = usersDao;
     }
+
     @RequestMapping(path = "/posts", method = RequestMethod.GET)
     public String viewAllPosts(Model model) {
         model.addAttribute("posts", postsDao.findAll());
@@ -35,7 +37,17 @@ public class PostController {
 
     @PostMapping("/posts/create")
     public String savePost(@RequestParam(name = "title") String title, @RequestParam(name = "body") String body) {
-        postsDao.save(new Post(title, body));
+        postsDao.save(new Post(title, body, usersDao.getById(1L)));
         return "redirect:/posts";
+    }
+    @PostMapping ("/posts/create")
+    public String createPost(@ModelAttribute Post post){
+       postsDao.save(post);
+        return "redirect:/posts";
+    }
+    @GetMapping("/posts/edit/{id}")
+    public String editPost(Model model, @PathVariable long id){
+        model.addAttribute("post", postsDao.getById(id));
+        return "posts/create";
     }
 }

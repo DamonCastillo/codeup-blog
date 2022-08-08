@@ -7,6 +7,6 @@
 <body>
 <h1 th:text="${singlePost.getTitle()}"></h1>
 <p th:text="${singlePost.getBody()}"></p>
-<p th:text="${users.getEmail()}"></p>
+<p th:if="${singlePost.user != null}" th:text="${singlePost.user.email}"></p>
 </body>
 </html>
